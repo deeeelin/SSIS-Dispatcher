@@ -1,7 +1,7 @@
 # SSIS-Dispatcher
 
 ## About
-The SSIS-Dispatcher project is a subproject under the SSIS(Scalable Inference Serving System for Language Models with NVIDIA MIG) project. It is a served as a serving manager component in the system. SSIS-Dispatcher is capable of receiving model inference requests and luanching inference pod under [Knative](https://knative.dev/docs/) framework while leveraging GPU sharing features supported my Nvidia Multi-Instance GPU(MIG) or Multi-Processing  Service (MPS), which allows finegrained unitlization of GPU resources, enhancing system efficiency.
+The SSIS-Dispatcher project is a subproject under the SSIS(Scalable Inference Serving System for Language Models with NVIDIA MIG) project. It is a served as a serving manager component in the system. SSIS-Dispatcher is capable of receiving model inference requests and luanching inference pod under [Knative](https://knative.dev/docs/) framework while leveraging GPU sharing features supported my Nvidia [Multi-Instance GPU(MIG)](https://www.nvidia.com/en-us/technologies/multi-instance-gpu/) or [Multi-Process Service (MPS)](https://docs.nvidia.com/deploy/mps/index.html), which allows finegrained unitlization of GPU resources, enhancing system efficiency.
 
 ## Getting Start
 ### Prerequisite
