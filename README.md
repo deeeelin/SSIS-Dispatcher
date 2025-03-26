@@ -1,9 +1,14 @@
-# Dispatcher Manual
+# SSIS-Dispatcher
 
-## Prerequisite
+## About
+The SSIS-Dispatcher project is a subproject under the SSIS(Scalable Inference Serving System for Language Models with NVIDIA MIG) project. It is a served as a serving manager component in the system. SSIS-Dispatcher is capable of receiving model inference requests and luanching inference pod under [Knative](https://knative.dev/docs/) framework while leveraging GPU sharing features supported my Nvidia Multi-Instance GPU(MIG) or Multi-Processing  Service (MPS), which allows finegrained unitlization of GPU resources, enhancing system efficiency.
+
+## Getting Start
+### Prerequisite
 * Requires a k8s cluster with version > 1.28
 * Fill three placeholder in `configuration.yaml`, `makefile`, and `config.go`. (Global search "PLACEHOLDER" to find all placeholders)
 * This demo project runs all knative service, pods  on `nthulab` namespace
+* You should have MIG or MPS kubernetes resource registered on your cluster
 * The MIG resource defined in node should be the resource name format below:
 ```
 nvidia.com/mig-1g.5gb
@@ -24,7 +29,7 @@ nvidia.com/gpu-31gb
 nvidia.com/gpu-32gb
 ```
 
-## 1. Setup Knative and Kourier Ingress/ Load Balancer
+### 1. Setup Knative and Kourier Ingress/ Load Balancer
 
 * Run `make setup_knative`
 * `k get po -n kourier-system`, check if kourier gateway is running
@@ -32,21 +37,21 @@ nvidia.com/gpu-32gb
 * You can use `curl <kourier service external ip>` to test kourier external gateway or run a pod on cluster that runs `curl http://kourier-internal.kourier-system.svc.cluster.local` to check the in-cluster gateway is operating
 * Use `kn service list` and find the url for the dispatcher, ex: `http://dispatcher.nthulab.192.168.1.10.sslip.io`
 
-## 2. Build Your Own Dispatcher Image
+### 2. Build Your Own Dispatcher Image
 
 * Run `make build`
 
-## 2. Deploy dispatcher
+### 3. Deploy dispatcher
 
 * Run `make deploy`
 
-## 3. Forward kourier in-cluster gateway 
+### 4. Forward kourier in-cluster gateway 
 
 * Assume the cluster external ip is unavailable, we make our test using in-cluster ip, which is likely available in most cases
 
 * Open another terminal window , then : `make forward`
 
-## 4. Send test API request to Dispatcher
+### 5. Send test API request to Dispatcher
 * Export your HuggingFace token : `export HF_TOKEN="<Your token>"`
 * Run `make test`, to send sample inference request 
 * (OPTIONAL): if your cluster support external ip , you can try send your request through external ip using this command template:
@@ -58,7 +63,7 @@ curl -X POST http://192.168.1.10:80 \
 		-d '{"token":"What is Deep Learning?","par":{"max_new_tokens":20},"env": {"MODEL_ID":"openai-community/gpt2","HF_TOKEN":"$(HF_TOKEN)"}}'
 ```
 
-## (OPTIONAL) Send Customize request to Dispatcher
+### (OPTIONAL) Send Customize request to Dispatcher
 * Make sure you done all steps above.
 * Reference this template, <> are placeholders you can change:
 ```
@@ -72,7 +77,7 @@ curl -X POST http://localhost:8080 \
 * Reference for envs : https://huggingface.co/docs/text-generation-inference/main/en/reference/launcher
 
 
-## (OPTIONAL) Uninstall Project
+## Uninstall Project
 * Delete all service running
 * Run `make clean` to remove dispatcher
 * Run `make remove_knative` to remove knative
