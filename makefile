@@ -50,6 +50,6 @@ forward:
 test:
 		cd test
 		source .venv/bin/activate
-	    python test.py
+	        python test.py
 		deactivate
 		cd ..
