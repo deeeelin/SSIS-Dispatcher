@@ -1,0 +1,49 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: dispatcher
+  namespace: nthulab
+spec:
+  template:
+    spec:
+      serviceAccountName: dispatcher-service-account
+      containers:
+        - name: dispatcher-container
+          image: ghcr.io/deeeelin/dispatcher:demo # <PLACEHOLDER:Your dispatcher image ex. gcr.io/nthulab/dispatcher:latest> 
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always 
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dispatcher-service-account
+  namespace: nthulab
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dispatcher
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dispatcher-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dispatcher
+subjects:
+  - kind: ServiceAccount
+    name: dispatcher-service-account
+    namespace: nthulab

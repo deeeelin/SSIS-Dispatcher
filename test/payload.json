@@ -1,0 +1,10 @@
+{
+    "token": "What is Deep Learning?",
+    "par": {
+        "max_new_tokens": "20"
+    },
+    "env": {
+        "MODEL_ID": "openai-community/gpt2",
+        "HF_TOKEN": ""
+    }
+}
