@@ -1,7 +1,7 @@
 # Dispatcher Manual
 
 ## Prerequisite
-* Requires k8s cluster version > 1.28
+* Requires a k8s cluster with version > 1.28
 * Fill three placeholder in `configuration.yaml`, `makefile`, and `config.go`. (Global search "PLACEHOLDER" to find all placeholders)
 * This demo project runs all knative service, pods  on `nthulab` namespace
 * The MIG resource defined in node should be the resource name format below:
