@@ -5,7 +5,7 @@ The SSIS-Dispatcher project is a subproject under the SSIS(Scalable Inference Se
 
 ## Getting Start
 ### Prerequisite
-* Requires a k8s cluster with version > 1.28
+* Requires a kubernetes cluster with version > 1.28
 * Fill three placeholder in `configuration.yaml`, `makefile`, and `config.go`. (Global search "PLACEHOLDER" to find all placeholders)
 * This demo project runs all knative service, pods  on `nthulab` namespace
 * You should have MIG or MPS kubernetes resource registered on your cluster
