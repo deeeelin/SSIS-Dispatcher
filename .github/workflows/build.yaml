@@ -1,0 +1,27 @@
+name: Build Dispatcher Image
+
+on:
+  push:
+    branches:
+      - main
+      - test
+  workflow_dispatch:
+
+jobs:
+      push-store-image:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v3
+
+          - name: Login to GitHub Container Registry
+            uses: docker/login-action@v1
+            with:
+              registry: ghcr.io
+              username: ${{github.actor}}
+              password: ${{secrets.GITHUB_TOKEN}}
+
+          - name: 'Build Image'
+            run: |
+              docker build -t ghcr.io/$GITHUB_ACTOR/SSIS-Dispatcher:$GITHUB_BASE_REF --platform linux/amd64 --push .
+
