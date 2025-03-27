@@ -3,13 +3,13 @@ name: Build Dispatcher Image
 on:
   push:
     branches:
-      - main
-      - test
+      - '*'
   workflow_dispatch:
 
 jobs:
       push-store-image:
         runs-on: ubuntu-latest
+ 
         steps:
           - name: Checkout code
             uses: actions/checkout@v3
@@ -22,6 +22,7 @@ jobs:
               password: ${{secrets.GITHUB_TOKEN}}
 
           - name: 'Build Image'
+            shell: bash
             run: |
-              docker build -t ghcr.io/$GITHUB_ACTOR/SSIS-Dispatcher:$GITHUB_BASE_REF --platform linux/amd64 --push .
+              docker build -t ghcr.io/${GITHUB_ACTOR}/ssis-dispatcher:${GITHUB_REF_NAME} --platform linux/amd64 --push .
 
