@@ -1,6 +1,6 @@
 # Variables
-IMAGE_NAME=dispatcher
-IMAGE_TAG=demo
+IMAGE_NAME=ssis-dispatcher
+IMAGE_TAG=main #<PLACEHOLDER: YOUR GITHUB BRANCH NAME>
 KUBE_CONFIG=configuration.yaml
 GITHUB_USER=deeeelin #<PLACEHOLDER: YOUR GITHUB USERNAME>
 
