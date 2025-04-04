@@ -18,47 +18,50 @@ jobs:
           - name: Checkout code
             uses: actions/checkout@v3
 
-          - name: Login to GitHub Container Registry
-            uses: docker/login-action@v1
-            with:
-              registry: ghcr.io
-              username: ${{github.actor}}
-              password: ${{secrets.GITHUB_TOKEN}}
+          # - name: Login to GitHub Container Registry
+          #   uses: docker/login-action@v1
+          #   with:
+          #     registry: ghcr.io
+          #     username: ${{github.actor}}
+          #     password: ${{secrets.GITHUB_TOKEN}}
 
-          - name: Set configurations
-            run: |
-              sed -i "s/^var gpuMode = .*/var gpuMode = \"${GPU_MODE}\"/" ./config.go
-              sed -i "s/^GITHUB_USER=.*/GITHUB_USER=${GITHUB_ACTOR}/" ./makefile
-              sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${GITHUB_REF_NAME}/" ./makefile
-              sed -i "s|image: .*|image: ghcr.io/${GITHUB_ACTOR}/ssis-dispatcher:${GITHUB_REF_NAME}|" ./configuration.yaml
-
-              cat ./config.go
-              cat ./makefile
-              cat ./configuration.yaml
-            env:
-              GPU_MODE: ${{ vars.GPU_MODE }}
-
-          - name: 'Build Image'
-            shell: bash
-            run: |
-              make build
-
-          # - name: Login and Deploy to Server
+          # - name: Set configurations
           #   run: |
-          #       mkdir -p ~/.ssh
-          #       echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
-          #       chmod 600 ~/.ssh/id_rsa
-          #       ssh-keyscan -H deploy-server.com >> ~/.ssh/known_hosts
+          #     sed -i "s/^var gpuMode = .*/var gpuMode = \"${GPU_MODE}\"/" ./config.go
+          #     sed -i "s/^GITHUB_USER=.*/GITHUB_USER=${GITHUB_ACTOR}/" ./makefile
+          #     sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${GITHUB_REF_NAME}/" ./makefile
+          #     sed -i "s|image: .*|image: ghcr.io/${GITHUB_ACTOR}/ssis-dispatcher:${GITHUB_REF_NAME}|" ./configuration.yaml
 
-          #       scp -i ~/.ssh/id_rsa -r . ${SSH_HOST}:/tmp/ssis-dispatcher
-          #       ssh -i ~/.ssh/id_rsa ${SSH_HOST}   
-
-          #       cd /tmp/ssis-dispatcher
-          #       make deploy
-          #       rm -r /tmp/ssis-dispatcher     
+          #     cat ./config.go
+          #     cat ./makefile
+          #     cat ./configuration.yaml
           #   env:
-          #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          #     SSH_HOST: ${{ secrets.SSH_HOST }}
+          #     GPU_MODE: ${{ vars.GPU_MODE }}
+
+          # - name: 'Build Image'
+          #   shell: bash
+          #   run: |
+          #     make build
+
+          - name: Login and Deploy to Server
+            run: |
+                mkdir -p ~/.ssh
+                echo -e "Host ${SSH_HOST_IP}\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+                echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+                chmod 600 ~/.ssh/id_rsa
+
+                ssh -i ~/.ssh/id_rsa ${SSH_HOSTNAME}@${SSH_HOST_IP} 'ls'
+
+                # scp -i ~/.ssh/id_rsa -r . ${SSH_HOSTNAME}@${SSH_HOST_IP}:/tmp/ssis-dispatcher
+                # ssh -i ~/.ssh/id_rsa ${SSH_HOSTNAME}@${SSH_HOST_IP}
+
+                # cd /tmp/ssis-dispatcher
+                # make deploy
+                # rm -r /tmp/ssis-dispatcher     
+            env:
+              SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+              SSH_HOSTNAME: ${{ secrets.SSH_HOSTNAME }}
+              SSH_HOST_IP: ${{ secrets.SSH_HOST_IP }}
 
                 
 
