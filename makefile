@@ -47,9 +47,4 @@ clean:
 		kubectl delete -f $(KUBE_CONFIG)
 forward:
 		kubectl port-forward --namespace kourier-system $(shell kubectl get pod -n kourier-system -l "app=3scale-kourier-gateway" --output=jsonpath="{.items[0].metadata.name}") 8080:8080 19000:9000 8443:8443
-test:
-		cd test
-		source .venv/bin/activate
-	        python test.py
-		deactivate
-		cd ..
+

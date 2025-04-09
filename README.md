@@ -54,29 +54,26 @@ nvidia.com/gpu-32gb
 
 ### 5. Send test API request to Dispatcher
 * Export your HuggingFace token : `export HF_TOKEN="<Your token>"`
-* Run `make test`, to send sample inference request 
-* (OPTIONAL): if your cluster support external ip , you can try send your request through external ip using this command template:
-```
-# Assume kourier service external ip is 192.168.1.10
-curl -X POST http://192.168.1.10:80 \
-		-H "Host: dispatcher.nthulab.192.168.1.10.sslip.io" \
-		-H "Content-Type: application/json" \
-		-d '{"token":"What is Deep Learning?","par":{"max_new_tokens":20},"env": {"MODEL_ID":"openai-community/gpt2","HF_TOKEN":"$(HF_TOKEN)"}}'
-```
+* Change Directory to `/test` and install required python package through `pip install -r requirements.txt`
+* Run `python test.py` to send sample request to Dispatcher
 
 ### (OPTIONAL) Send Customize request to Dispatcher
 * Make sure you done all steps above.
-* Reference this template, <> are placeholders you can change:
+* You can set custom request through modifying `/test/payload.json`	:
 ```
-curl -X POST http://localhost:8080 \
-		-H "Host: dispatcher.default.127.0.0.1.nip.io" \
-		-H "Content-Type: application/json" \
-		-d '{"token":"<your input query to model>","par":{"<parameter1>":<value1>,"<parameter1>":<value2>,...},"env": {"MODEL_ID":"<model ids listed in https://hf.co/models , ex. meta-llama/Meta-Llama-3.1-8B>", "<env2>":<value2>,....,"HF_TOKEN":"$(HF_TOKEN)"}}'
-
-```
-* Reference for parameters: https://huggingface.co/docs/transformers/main_classes/text_generation
-* Reference for envs : https://huggingface.co/docs/text-generation-inference/main/en/reference/launcher
-
+{
+    "token": "What is Deep Learning?",
+    "par": {
+        "max_new_tokens": "20"
+    },
+    "env": {
+        "MODEL_ID": "openai-community/gpt2",
+        "HF_TOKEN": ""
+    }
+}
+``` 
+* Reference for parameters (par): https://huggingface.co/docs/transformers/main_classes/text_generation
+* Reference for environment variables (env) : https://huggingface.co/docs/text-generation-inference/main/en/reference/launcher
 
 ## Uninstall Project
 * Delete all service running
