@@ -150,6 +150,7 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 	log.Printf("Environment variables for service: %+v", envVars)
 
 	// Add all the resource requirements define to service instance
+
 	svcInstance.Spec.Template = servingv1.RevisionTemplateSpec{
 		ObjectMeta: metav1.ObjectMeta{
 			Annotations: map[string]string{
@@ -170,6 +171,7 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 					// }},
 					Env: envVars,
 				}},
+				RuntimeClassName: &spec.RuntimeClassName,
 				// Volumes: []v1.Volume{{
 				// 	Name: "disk-volume",
 				// 	VolumeSource: v1.VolumeSource{
