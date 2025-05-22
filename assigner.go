@@ -163,7 +163,7 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 			PodSpec: v1.PodSpec{
 				Containers: []v1.Container{{
 					Image:           image,
-					ImagePullPolicy: v1.PullAlways,
+					ImagePullPolicy: v1.PullIfNotPresent,
 					Resources:       resourceRequirements,
 					// VolumeMounts: []v1.VolumeMount{{
 					// 	Name:      "disk-volume",
