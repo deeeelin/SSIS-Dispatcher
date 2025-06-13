@@ -57,9 +57,8 @@ func (d Processor) ResourceEstimate(group RequestGroup, gpuMode string) Resource
 	var ConfigList []string
 	var ConfigMap map[string]int
 
-	if gpuMode == "mps" {
-		log.Println("Current GPU mode is MPS")
-
+	if gpuMode == "mps_nebuly" {
+		log.Println("Current GPU mode is MPS (Nebuly)")
 		ConfigList = []string{}
 		for i := 1; i <= 32; i++ {
 			ConfigList = append(ConfigList, fmt.Sprintf("nvidia.com/gpu-%dgb", i))
@@ -68,7 +67,17 @@ func (d Processor) ResourceEstimate(group RequestGroup, gpuMode string) Resource
 		for _, config := range ConfigList {
 			ConfigMap[config] = 0
 		}
+	} else if gpuMode == "mps" {
+		log.Println("Current GPU mode is official MPS")
 
+		ConfigList = []string{}
+		for i := 1; i <= 32; i++ {
+			ConfigList = []string{"nvidia.com/gpu.shared"}
+		}
+		ConfigMap = make(map[string]int)
+		for _, config := range ConfigList {
+			ConfigMap[config] = 0
+		}
 	} else if gpuMode == "mig" {
 		log.Println("Current GPU mode is MIG")
 		ConfigMap = map[string]int{
