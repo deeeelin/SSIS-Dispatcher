@@ -5,7 +5,7 @@ var testImage = map[string]string{
 	"command": "",
 }
 var inferImage = map[string]string{
-	"image":   "ghcr.io/huggingface/text-generation-inference:1.4.4", // "ghcr.io/deeeelin/inference_server:latest"
+	"image":   "ghcr.io/llshang/tgi_custom:latest", //"ghcr.io/huggingface/text-generation-inference:1.4.4", // "ghcr.io/deeeelin/inference_server:latest"
 	"command": "",
 }
 

@@ -162,9 +162,6 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 		},
 		Spec: servingv1.RevisionSpec{
 			PodSpec: v1.PodSpec{
-				SecurityContext: &v1.PodSecurityContext{
-					FSGroup: pointer.Int64(0),
-				},
 				Containers: []v1.Container{{
 					Image:           image,
 					ImagePullPolicy: v1.PullIfNotPresent,
