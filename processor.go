@@ -70,10 +70,7 @@ func (d Processor) ResourceEstimate(group RequestGroup, gpuMode string) Resource
 	} else if gpuMode == "mps" {
 		log.Println("Current GPU mode is official MPS")
 
-		ConfigList = []string{}
-		for i := 1; i <= 32; i++ {
-			ConfigList = []string{"nvidia.com/gpu.shared"}
-		}
+		ConfigList = []string{"nvidia.com/gpu.shared"}
 		ConfigMap = make(map[string]int)
 		for _, config := range ConfigList {
 			ConfigMap[config] = 0

@@ -17,6 +17,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/utils/pointer"
 	"knative.dev/client/pkg/kn/commands"
 	servinglib "knative.dev/client/pkg/serving"
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
@@ -161,6 +162,9 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 		},
 		Spec: servingv1.RevisionSpec{
 			PodSpec: v1.PodSpec{
+				SecurityContext: &v1.PodSecurityContext{ // run as user 1000 for mps server connection
+					RunAsUser: pointer.Int64(1000),
+				},
 				Containers: []v1.Container{{
 					Image:           image,
 					ImagePullPolicy: v1.PullIfNotPresent,
