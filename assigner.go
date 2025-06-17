@@ -162,9 +162,6 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 		},
 		Spec: servingv1.RevisionSpec{
 			PodSpec: v1.PodSpec{
-				SecurityContext: &v1.PodSecurityContext{ // run as user 1000 for mps server connection
-					RunAsUser: pointer.Int64(1000),
-				},
 				Containers: []v1.Container{{
 					Image:           image,
 					ImagePullPolicy: v1.PullIfNotPresent,
@@ -174,6 +171,9 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 					// 	MountPath: "/data",
 					// }},
 					Env: envVars,
+					SecurityContext: &v1.SecurityContext{ // run as user 1000 for mps server connection
+						RunAsUser: pointer.Int64(1000),
+					},
 				}},
 				RuntimeClassName: &spec.RuntimeClassName,
 				// Volumes: []v1.Volume{{
