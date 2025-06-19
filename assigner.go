@@ -227,7 +227,13 @@ func (a *Assigner) waitForServiceReadyAndForward(spec ServiceSpec, requestPayloa
 			}
 		}
 
-		log.Printf("\rWaiting service %s to be ready ... (%d seconds waited)", spec.Name, timeCounter)
+		log.Printf("Waiting service %s to be ready ... ", spec.Name)
+
+		if timeCounter >= 60 { // wait for 60 seconds
+			log.Printf("Service %s is not ready after 300 seconds, request forwarding failed", spec.Name)
+			return
+		}
+
 		timeCounter += 1
 		time.Sleep(1 * time.Second)
 	}
