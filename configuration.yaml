@@ -97,3 +97,35 @@ data:
     nvidia.com/gpu-31gb
     nvidia.com/gpu-32gb
 ---
+
+#---
+# Register a PV to require storage on disk
+#apiVersion: v1
+#kind: PersistentVolume
+#metadata:
+#  name: knative-pv
+#  namespace: nthulab
+#spec:
+#  capacity:
+#    storage: 100Gi
+#  accessModes:
+#    - ReadWriteMany
+#  persistentVolumeReclaimPolicy: Retain
+#  storageClassName: manual
+#  hostPath:
+#    path: /net/to/storage ex. /net/storage149/autofs/css89
+#
+#--- 
+# Use a claim (similar to role binding) for a PV, then a pod uses this PV as a volume and calls it
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  name: knative-pv-claim
+#  namespace: nthulab
+#spec:
+#  accessModes:
+#    - ReadWriteMany
+#  resources:
+#    requests:
+#      storage: 100Gi
+#  storageClassName: manual

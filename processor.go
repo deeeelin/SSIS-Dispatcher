@@ -86,7 +86,7 @@ func (d Processor) ResourceEstimate(group RequestGroup) ResourceEstimate {
 	log.Printf("Available GPU resources: %v", ConfigMap)
 
 	// Find the smallest available GPU slice
-	smallestSlice := ""
+	smallestSlice := ConfigList[0] // Default to the first config in case none are available
 
 	for _, config := range ConfigList {
 		if ConfigMap[config] > 0 {
