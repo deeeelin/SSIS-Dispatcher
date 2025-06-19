@@ -13,6 +13,9 @@ var image string
 
 func init() {
 
+	ConfigList = make([]string, 0)
+	ConfigMap = make(map[string]int)
+
 	data, err := os.ReadFile("/etc/dispatcher-config/gpu-resource-config")
 	if err != nil {
 		log.Fatalf("Failed to read gpu resource config file: %v", err)
