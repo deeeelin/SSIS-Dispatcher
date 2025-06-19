@@ -30,7 +30,7 @@ jobs:
             run: |
               sed -i "s/^GITHUB_USER=.*/GITHUB_USER=${GITHUB_ACTOR}/" ./makefile
               sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${GITHUB_REF_NAME}/" ./makefile
-              sed -i '/^\s*image: ghcr.io\/deeeelin\/ssis-dispatcher:/s|^\(\s*image:\s*\).*|ghcr.io/${GITHUB_ACTOR}/ssis-dispatcher:${GITHUB_REF_NAME}|' ./configuration.yaml
+              sed -i "s|^[[:space:]]*image: .*|image: ghcr.io/${GITHUB_ACTOR}/ssis-dispatcher:${GITHUB_REF_NAME}|" ./configuration.yaml
 
               cat ./makefile
               cat ./configuration.yaml
