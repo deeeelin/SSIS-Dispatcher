@@ -49,8 +49,7 @@ metadata:
   namespace: nthulab
 data:
   service-namespace: nthulab
-  inference-image: |
-    ghcr.io/llshang/tgi_custom:latest
+  inference-image: ghcr.io/llshang/tgi_custom:latest
   gpu-resource-config: |
     nvidia.com/gpu-1gb
     nvidia.com/gpu-2gb
