@@ -227,7 +227,7 @@ func (a *Assigner) waitForServiceReadyAndForward(spec ServiceSpec, requestPayloa
 			}
 		}
 
-		log.Printf("Waiting service %s to be ready ... (%d seconds waited)", spec.Name, timeCounter)
+		log.Printf("\rWaiting service %s to be ready ... (%d seconds waited)", spec.Name, timeCounter)
 		timeCounter += 1
 		time.Sleep(1 * time.Second)
 	}
