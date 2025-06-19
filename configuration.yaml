@@ -13,7 +13,7 @@ spec:
             name: dispatcher-config
       containers:
         - name: dispatcher-container
-          image: ghcr.io/deeeelin/dispatcher:demo # <PLACEHOLDER:Your dispatcher image ex. gcr.io/nthulab/dispatcher:latest> 
+          image: ghcr.io/deeeelin/ssis-dispatcher:main # <PLACEHOLDER:Your dispatcher image ex. gcr.io/you/dispatcher:latest> 
           ports:
             - containerPort: 8080
           imagePullPolicy: Always 
