@@ -6,6 +6,7 @@ on:
       - '*'
     paths:
       - '**.go'
+      - '**.yaml'
       - 'Dockerfile'
       - '.github/workflows/*'
   workflow_dispatch:
