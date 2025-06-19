@@ -41,7 +41,7 @@ jobs:
               git config user.email github-actions@github.com
               git add .
               git commit -m "Customized configuration.yaml and makefile for ${GITHUB_REF_NAME} branch"
-              git push origin ${GITHUB_REF_NAME}:${GITHUB_REF_NAME}-deployment
+              git push -f origin ${GITHUB_REF_NAME}:${GITHUB_REF_NAME}-deployment
           
           - name: 'Build Image'
             shell: bash
