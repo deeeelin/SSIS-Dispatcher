@@ -129,17 +129,6 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 		}
 	}
 
-	// Select the image and command based on the spec.Model on Image Map
-	var selectedImage map[string]string
-	if spec.Model == "test" {
-		selectedImage = testImage
-	} else {
-		selectedImage = inferImage
-	}
-	image := selectedImage["image"]
-	command := selectedImage["command"]
-	fmt.Println("Choosed image", image)
-
 	// Convert spec.Env from a map[string]string to []v1.EnvVar
 	var envVars []v1.EnvVar
 	for key, value := range spec.Env {
@@ -148,7 +137,6 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 			Value: value,
 		})
 	}
-	log.Printf("Environment variables for service: %+v", envVars)
 
 	// Add all the resource requirements define to service instance
 
@@ -189,19 +177,12 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 		},
 	}
 
-	if command != "" {
-		log.Printf("Setting command: %s", command)
-		svcInstance.Spec.Template.Spec.PodSpec.Containers[0].Command = []string{command}
-	}
-
 	// Use the service instance to create service
 	ctx := context.Background()
 	err = client.CreateService(ctx, svcInstance)
 	if err != nil {
 		log.Fatalf("Error creating Knative service: %s", err.Error())
 	}
-
-	log.Printf("Creating Prometheus support for service: %s", spec.Name)
 
 	// wait for service be ready and forward payload
 	go a.waitForServiceReadyAndForward(spec, requestPayloads)

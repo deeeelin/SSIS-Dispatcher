@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	v1 "k8s.io/api/core/v1"
@@ -33,7 +32,7 @@ type ResourceEstimate struct {
 // DecideService fills the remaining information in the ServiceSpec based on the RequestGroup and ResourceEstimate
 func (d Processor) DecideService(group RequestGroup) ServiceSpec {
 	log.Println("Deciding service spec based on request group")
-	resourceEstimate := d.ResourceEstimate(group, gpuMode)
+	resourceEstimate := d.ResourceEstimate(group)
 
 	spec := ServiceSpec{
 		CPU:              resourceEstimate.CPU,
@@ -50,51 +49,9 @@ func (d Processor) DecideService(group RequestGroup) ServiceSpec {
 }
 
 // Estimate Resource usage for a RequestGroup
-func (d Processor) ResourceEstimate(group RequestGroup, gpuMode string) ResourceEstimate {
+func (d Processor) ResourceEstimate(group RequestGroup) ResourceEstimate {
 	// Policy , gives smallest slice availablem on cluster.
 	log.Println("Estimating resources for request group")
-
-	var ConfigList []string
-	var ConfigMap map[string]int
-
-	if gpuMode == "mps_nebuly" {
-		log.Println("Current GPU mode is MPS (Nebuly)")
-		ConfigList = []string{}
-		for i := 1; i <= 32; i++ {
-			ConfigList = append(ConfigList, fmt.Sprintf("nvidia.com/gpu-%dgb", i))
-		}
-		ConfigMap = make(map[string]int)
-		for _, config := range ConfigList {
-			ConfigMap[config] = 0
-		}
-	} else if gpuMode == "mps" {
-		log.Println("Current GPU mode is official MPS")
-
-		ConfigList = []string{"nvidia.com/gpu.shared"}
-		ConfigMap = make(map[string]int)
-		for _, config := range ConfigList {
-			ConfigMap[config] = 0
-		}
-	} else if gpuMode == "mig" {
-		log.Println("Current GPU mode is MIG")
-		ConfigMap = map[string]int{
-			"nvidia.com/mig-1g.5gb":  0,
-			"nvidia.com/mig-2g.10gb": 0,
-			"nvidia.com/mig-3g.20gb": 0,
-			"nvidia.com/mig-4g.20gb": 0,
-			"nvidia.com/mig-7g.40gb": 0,
-			"nvidia.com/gpu":         0,
-		}
-
-		ConfigList = []string{
-			"nvidia.com/mig-1g.5gb",
-			"nvidia.com/mig-2g.10gb",
-			"nvidia.com/mig-3g.20gb",
-			"nvidia.com/mig-4g.20gb",
-			"nvidia.com/mig-7g.40gb",
-			"nvidia.com/gpu",
-		}
-	}
 
 	var totalCPU int
 	var totalMemory int
@@ -120,13 +77,13 @@ func (d Processor) ResourceEstimate(group RequestGroup, gpuMode string) Resource
 	}
 
 	for _, node := range nodes.Items {
-		for _, migConfig := range ConfigList {
-			if Quantity, ok := node.Status.Capacity[v1.ResourceName(migConfig)]; ok {
-				ConfigMap[migConfig] += int(Quantity.Value())
+		for _, gpuConfig := range ConfigList {
+			if Quantity, ok := node.Status.Capacity[v1.ResourceName(gpuConfig)]; ok {
+				ConfigMap[gpuConfig] += int(Quantity.Value())
 			}
 		}
 	}
-	log.Printf("Available %s slices: %v", gpuMode, ConfigMap)
+	log.Printf("Available GPU resources: %v", ConfigMap)
 
 	// Find the smallest available GPU slice
 	smallestSlice := ""

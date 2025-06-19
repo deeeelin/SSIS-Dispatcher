@@ -72,7 +72,7 @@ func parseRequest(r *http.Request) Request {
 	log.Printf("Model: %s", req.Model)
 	log.Printf("Env: %v", req.Env)
 	log.Printf("Par: %v", req.Par)
-	log.Printf("SLO: %v", req.Label)
+	log.Printf("Label: %v", req.Label)
 
 	return req
 }
@@ -89,8 +89,4 @@ func getOrCreateRequestGroup(model string) RequestGroup {
 // addRequestToGroup adds a request to a request group and updates its properties
 func addRequestToGroup(group *RequestGroup, req Request) {
 	group.Requests = append(group.Requests, req)
-	// group.TokenSum += req.TokenSize
-	// if req.SLO < group.MinSLO || group.MinSLO == 0 {
-	// 	group.MinSLO = req.SLO
-	// }
 }

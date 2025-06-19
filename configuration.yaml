@@ -7,13 +7,20 @@ spec:
   template:
     spec:
       serviceAccountName: dispatcher-service-account
+      volumes:
+        - name: dispatcher-config-volume
+          configMap:
+            name: dispatcher-config
       containers:
         - name: dispatcher-container
           image: ghcr.io/deeeelin/dispatcher:demo # <PLACEHOLDER:Your dispatcher image ex. gcr.io/nthulab/dispatcher:latest> 
           ports:
             - containerPort: 8080
           imagePullPolicy: Always 
-
+          volumeMounts:
+              - name: dispatcher--config-volume
+                mountPath: /etc/dispatcher-config
+                readOnly: true
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -35,15 +42,46 @@ rules:
       - '*'
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: dispatcher-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: dispatcher
-subjects:
-  - kind: ServiceAccount
-    name: dispatcher-service-account
-    namespace: nthulab
+  name: dispatcher-config
+  namespace: nthulab
+data:
+  service-namespace: nthulab
+  inference-image: |
+    ghcr.io/llshang/tgi_custom:latest
+  gpu-resource-config: |
+    nvidia.com/gpu-1gb
+    nvidia.com/gpu-2gb
+    nvidia.com/gpu-3gb
+    nvidia.com/gpu-4gb
+    nvidia.com/gpu-5gb
+    nvidia.com/gpu-6gb
+    nvidia.com/gpu-7gb
+    nvidia.com/gpu-8gb
+    nvidia.com/gpu-9gb
+    nvidia.com/gpu-10gb
+    nvidia.com/gpu-11gb
+    nvidia.com/gpu-12gb
+    nvidia.com/gpu-13gb
+    nvidia.com/gpu-14gb
+    nvidia.com/gpu-15gb
+    nvidia.com/gpu-16gb
+    nvidia.com/gpu-17gb
+    nvidia.com/gpu-18gb
+    nvidia.com/gpu-19gb
+    nvidia.com/gpu-20gb
+    nvidia.com/gpu-21gb
+    nvidia.com/gpu-22gb
+    nvidia.com/gpu-23gb
+    nvidia.com/gpu-24gb
+    nvidia.com/gpu-25gb
+    nvidia.com/gpu-26gb
+    nvidia.com/gpu-27gb
+    nvidia.com/gpu-28gb
+    nvidia.com/gpu-29gb
+    nvidia.com/gpu-30gb
+    nvidia.com/gpu-31gb
+    nvidia.com/gpu-32gb
+---
