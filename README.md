@@ -7,28 +7,10 @@ The SSIS-Dispatcher project is a subproject branched from the SSIS(Scalable Serv
 ## Getting Start
 ### Prerequisite
 * Requires a kubernetes cluster with version > 1.28
-* Fill three placeholder in `configuration.yaml`, `makefile`, and `config.go`. (Global search "PLACEHOLDER" to find all placeholders)
-* This demo project runs all knative service, pods  on `nthulab` namespace
+* This demo project default runs all knative service, pods  on `nthulab` namespace
 * You should have MIG or MPS kubernetes resource registered on your cluster
-* The MIG resource defined in node should be the resource name format below:
-```
-nvidia.com/mig-1g.5gb
-nvidia.com/mig-2g.10gb
-nvidia.com/mig-3g.20gb
-nvidia.com/mig-4g.20gb
-nvidia.com/mig-7g.40gb
-```
-* The MPS resource defined in node should be the resource name format below:
-```
-nvidia.com/gpu-1gb
-nvidia.com/gpu-2gb
-nvidia.com/gpu-3gb
-nvidia.com/gpu-4gb
-...
-nvidia.com/gpu-30gb
-nvidia.com/gpu-31gb
-nvidia.com/gpu-32gb
-```
+    * For MIG environment setup, reference the [GPU operator documentation](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-operator-mig.html)
+    * For MPS setup, recommended [Nebuly GPU device plugin](https://github.com/nebuly-ai/k8s-device-plugin)
 
 ### 1. Setup Knative and Kourier Ingress/ Load Balancer
 
@@ -46,13 +28,39 @@ nvidia.com/gpu-32gb
 
 * Run `make deploy`
 
-### 4. Forward kourier in-cluster gateway 
+### 4. Configure Dispatcher and Restart pod
+
+* Run `kubectl edit configmap dispatcher-config
+* Edit data section to set service namespace, inference image and GPU resource names that applies to your system environment
+    * The MIG resource defined in node may have the example resource name format below:
+    ```
+    nvidia.com/mig-1g.5gb
+    nvidia.com/mig-2g.10gb
+    nvidia.com/mig-3g.20gb
+    nvidia.com/mig-4g.20gb
+    nvidia.com/mig-7g.40gb
+    ```
+    * The nebuly MPS resource defined in node may have the example the resource name format below:
+    ```
+    nvidia.com/gpu-1gb
+    nvidia.com/gpu-2gb
+    nvidia.com/gpu-3gb
+    nvidia.com/gpu-4gb
+    ...
+    nvidia.com/gpu-30gb
+    nvidia.com/gpu-31gb
+    nvidia.com/gpu-32gb
+    ```
+
+* Restart the dispatcher pod to reload configurations (by deleting it)
+
+### 5. Forward kourier in-cluster gateway 
 
 * Assume the cluster external ip is unavailable, we make our test using in-cluster ip, which is likely available in most cases
 
 * Open another terminal window , then : `make forward`
 
-### 5. Send test API request to Dispatcher
+### 6. Send test API request to Dispatcher
 * Export your HuggingFace token : `export HF_TOKEN="<Your token>"`
 * Change Directory to `/test` and install required python package through `pip install -r requirements.txt`
 * Run `python test.py` to send sample request to Dispatcher
