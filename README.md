@@ -20,13 +20,13 @@ The SSIS-Dispatcher project is a subproject branched from the SSIS(Scalable Serv
 * You can use `curl <kourier service external ip>` to test kourier external gateway or run a pod on cluster that runs `curl http://kourier-internal.kourier-system.svc.cluster.local` to check the in-cluster gateway is operating
 * Use `kn service list` and find the url for the dispatcher, ex: `http://dispatcher.nthulab.192.168.1.10.sslip.io`
 
-### 2. Build Your Own Dispatcher Image
+### 2. Build Your Own Dispatcher Image (Optional)
 
-* Run `make build`
+* If you want to build your own dispatcher image, Run `make build`
 
 ### 3. Deploy dispatcher
 
-* Run `make deploy`
+* Run `make deploy` to deploy your own dispatcher image, run `kubectl apply -f https://raw.githubusercontent.com/deeeelin/SSIS-Dispatcher/main-deployment/configuration.yaml` to deploy prebuilt image from main branch
 
 ### 4. Configure Dispatcher and Restart pod
 
