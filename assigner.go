@@ -43,12 +43,14 @@ func (a *Assigner) AssignService(spec ServiceSpec, group RequestGroup) {
 	client, err := p.NewServingClient(namespace)
 	if err != nil {
 		log.Fatalf("Error creating Knative serving client: %s", err.Error())
+		return
 	}
 
 	// List all services
 	serviceList, err := client.ListServices(context.Background())
 	if err != nil {
 		log.Fatalf("Error listing Knative services: %s", err.Error())
+		return
 	}
 
 	// Check if the specified service name from spec exists
@@ -84,6 +86,7 @@ func (a *Assigner) CreatePayload(req Request) io.ReadCloser {
 	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
 		log.Fatalf("Error packing request: %s", err.Error())
+		return nil
 	}
 	log.Printf("Request Payload: %s", string(jsonPayload))
 	return ioutil.NopCloser(bytes.NewBuffer(jsonPayload))
@@ -99,6 +102,7 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 	client, err := p.NewServingClient(namespace)
 	if err != nil {
 		log.Fatalf("Error creating Knative serving client: %s", err.Error())
+		return
 	}
 
 	//Create a service instance
@@ -206,13 +210,19 @@ func (a *Assigner) waitForServiceReadyAndForward(spec ServiceSpec, requestPayloa
 	knClient, err := p.NewServingClient(namespace)
 	if err != nil {
 		log.Fatalf("Error creating Knative serving client: %s", err.Error())
+		return
 	}
 
 	ctx := context.Background()
 	for {
 		service, err := knClient.GetService(ctx, spec.Name)
 		if err != nil {
-			log.Fatalf("Error getting Knative service: %s", err.Error())
+			log.Fatalf("Error getting Knative service: %s, service may not exist", err.Error())
+			return
+		}
+		if timeCounter >= 60 { // wait for 60 seconds
+			log.Printf("Service %s is not ready after 300 seconds, request forwarding failed", spec.Name)
+			return
 		}
 
 		// wait for service to be ready
@@ -228,11 +238,6 @@ func (a *Assigner) waitForServiceReadyAndForward(spec ServiceSpec, requestPayloa
 		}
 
 		log.Printf("Waiting service %s to be ready ... (%d seconds waited)", spec.Name, timeCounter)
-
-		if timeCounter >= 60 { // wait for 60 seconds
-			log.Printf("Service %s is not ready after 300 seconds, request forwarding failed", spec.Name)
-			return
-		}
 
 		timeCounter += 1
 		time.Sleep(1 * time.Second)
@@ -252,17 +257,20 @@ func (a *Assigner) forwardRequest(Name string, requestPayload io.ReadCloser) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		log.Fatalf("Failed to create in-cluster config: %v", err)
+		return
 	}
 
 	kubeClient, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		log.Fatalf("Failed to create Kubernetes client: %v", err)
+		return
 	}
 
 	// Get the IP address of the kourier service
 	kourierService, err := kubeClient.CoreV1().Services("kourier-system").Get(context.TODO(), "kourier", metav1.GetOptions{})
 	if err != nil {
 		log.Fatalf("Failed to get kourier service: %v", err)
+		return
 	}
 
 	kourierIP := kourierService.Status.LoadBalancer.Ingress[0].IP
@@ -274,11 +282,13 @@ func (a *Assigner) forwardRequest(Name string, requestPayload io.ReadCloser) {
 	knClient, err := p.NewServingClient(namespace)
 	if err != nil {
 		log.Fatalf("Error creating Knative serving client: %s", err.Error())
+		return
 	}
 
 	service, err := knClient.GetService(context.Background(), Name)
 	if err != nil {
 		log.Fatalf("Error getting Knative service: %s", err.Error())
+		return
 	}
 
 	serviceURL := service.Status.URL.String()

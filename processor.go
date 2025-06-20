@@ -33,6 +33,10 @@ type ResourceEstimate struct {
 func (d Processor) DecideService(group RequestGroup) ServiceSpec {
 	log.Println("Deciding service spec based on request group")
 	resourceEstimate := d.ResourceEstimate(group)
+	if resourceEstimate.CPU == 0 {
+		log.Println("Resource estimate failed, returning empty ServiceSpec")
+		return ServiceSpec{CPU: 0}
+	}
 
 	spec := ServiceSpec{
 		CPU:              resourceEstimate.CPU,
@@ -64,16 +68,19 @@ func (d Processor) ResourceEstimate(group RequestGroup) ResourceEstimate {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		log.Fatalf("Failed to create in-cluster config: %v", err)
+		return ResourceEstimate{CPU: 0}
 	}
 
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		log.Fatalf("Failed to create clientset: %v", err)
+		return ResourceEstimate{CPU: 0}
 	}
 
 	nodes, err := clientset.CoreV1().Nodes().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatalf("Failed to list nodes: %v", err)
+		return ResourceEstimate{CPU: 0}
 	}
 
 	for _, node := range nodes.Items {

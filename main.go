@@ -78,6 +78,10 @@ func sequentialProcessor() {
 		log.Printf("Processing group sequentially for model: %s", group.Requests[0].Model)
 
 		serviceSpec := processor.DecideService(group) // decide the service spec
-		assigner.AssignService(serviceSpec, group)    // create the service and forward the request
+		if serviceSpec.CPU == 0 {
+			log.Println("Failed to decide service spec, skipping request group")
+			continue // skip this group if service spec is invalid
+		}
+		assigner.AssignService(serviceSpec, group) // create the service and forward the request
 	}
 }
