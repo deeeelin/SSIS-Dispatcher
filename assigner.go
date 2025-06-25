@@ -304,13 +304,13 @@ func (a *Assigner) forwardRequest(spec ServiceSpec, requestPayload io.ReadCloser
 		serviceURL = strings.TrimPrefix(serviceURL, "http://")
 	}
 
-	// Set the Host header to Name.default.127.0.0.1.nip.io
-	if spec.Subroute != "" {
-		serviceURL += spec.Subroute
-		log.Printf("Using custom URL route: %s", serviceURL)
-	}
 	host := fmt.Sprintf(serviceURL)
 	url := "http://" + kourierIP
+
+	if spec.Subroute != "" {
+		url += spec.Subroute
+		log.Printf("Using custom URL route: %s", url)
+	}
 
 	// Create the HTTP POST request
 	client := &http.Client{}
