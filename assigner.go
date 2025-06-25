@@ -226,10 +226,10 @@ func (a *Assigner) waitForServiceReadyAndForward(spec ServiceSpec, requestPayloa
 			log.Fatalf("Error getting Knative service: %s, service may not exist", err.Error())
 			return
 		}
-		if timeCounter >= 60 { // wait for 60 seconds
-			log.Printf("Service %s is not ready after 300 seconds, request forwarding failed", spec.Name)
-			return
-		}
+		// if timeCounter >= 60 { // wait for 60 seconds
+		// 	log.Printf("Service %s is not ready after 300 seconds, request forwarding failed", spec.Name)
+		// 	return
+		// }
 
 		// wait for service to be ready
 		for _, condition := range service.Status.Conditions {
