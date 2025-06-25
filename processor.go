@@ -21,6 +21,7 @@ type ServiceSpec struct {
 	Model            string
 	Label            map[string]string
 	RuntimeClassName string
+	Subroute         string
 }
 
 type ResourceEstimate struct {
@@ -47,6 +48,11 @@ func (d Processor) DecideService(group RequestGroup) ServiceSpec {
 		Model:            group.Requests[0].Model,
 		Label:            group.Requests[0].Label,
 		RuntimeClassName: "nvidia",
+		Subroute:         "",
+	}
+
+	if group.Requests[0].Subroute != "" {
+		spec.Subroute = group.Requests[0].Subroute // Assuming route is provided in custom data
 	}
 	//log.Printf("Decided ServiceSpec - CPU: %d, GPU: %d, Memory: %d, ServiceName: %s, Model: %s, SLO: %d", spec.CPU, spec.GPU, spec.Memory, spec.ServiceName, spec.Model, spec.SLO)
 	return spec

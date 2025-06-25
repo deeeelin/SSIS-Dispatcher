@@ -78,9 +78,15 @@ func (a *Assigner) AssignService(spec ServiceSpec, group RequestGroup) {
 func (a *Assigner) CreatePayload(req Request) io.ReadCloser {
 	log.Println("Creating payload for request")
 
-	payload := map[string]interface{}{
-		"inputs":     req.Token,
-		"parameters": req.Par,
+	var payload map[string]interface{}
+	if req.Payload != nil {
+		payload = req.Payload
+	} else {
+		payload = map[string]interface{}{
+			"inputs":     req.Token,
+			"parameters": req.Par,
+		}
+
 	}
 
 	jsonPayload, err := json.Marshal(payload)
@@ -196,7 +202,7 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 func (a *Assigner) CurrentService(spec ServiceSpec, requestPayloads []io.ReadCloser) {
 	// Forward each request one by one
 	for _, requestPayload := range requestPayloads {
-		go a.forwardRequest(spec.Name, requestPayload)
+		go a.forwardRequest(spec, requestPayload)
 	}
 }
 
@@ -231,7 +237,7 @@ func (a *Assigner) waitForServiceReadyAndForward(spec ServiceSpec, requestPayloa
 				log.Printf("\nKnative Service is ready - Name: %s", spec.Name)
 				// Forward each request payload of the request group one by one
 				for _, requestPayload := range requestPayloads {
-					a.forwardRequest(spec.Name, requestPayload)
+					a.forwardRequest(spec, requestPayload)
 				}
 				return
 			}
@@ -245,8 +251,8 @@ func (a *Assigner) waitForServiceReadyAndForward(spec ServiceSpec, requestPayloa
 }
 
 // forward a request to the service using kourier-internal with Host header and print request info
-func (a *Assigner) forwardRequest(Name string, requestPayload io.ReadCloser) {
-	log.Printf("Forwarding request to service: %s", Name)
+func (a *Assigner) forwardRequest(spec ServiceSpec, requestPayload io.ReadCloser) {
+	log.Printf("Forwarding request to service: %s", spec.Name)
 
 	payload, err := ioutil.ReadAll(requestPayload)
 	if err != nil {
@@ -285,7 +291,7 @@ func (a *Assigner) forwardRequest(Name string, requestPayload io.ReadCloser) {
 		return
 	}
 
-	service, err := knClient.GetService(context.Background(), Name)
+	service, err := knClient.GetService(context.Background(), spec.Name)
 	if err != nil {
 		log.Fatalf("Error getting Knative service: %s", err.Error())
 		return
@@ -299,6 +305,10 @@ func (a *Assigner) forwardRequest(Name string, requestPayload io.ReadCloser) {
 	}
 
 	// Set the Host header to Name.default.127.0.0.1.nip.io
+	if spec.Subroute != "" {
+		serviceURL += spec.Subroute
+		log.Printf("Using custom URL route: %s", serviceURL)
+	}
 	host := fmt.Sprintf(serviceURL)
 	url := "http://" + kourierIP
 

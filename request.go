@@ -8,15 +8,18 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 )
 
 // Single Request object
 type Request struct {
-	Model string                 // string field for model
-	Token string                 `json:"token"` // string field for token
-	Env   map[string]string      `json:"env"`   // map of strings for env
-	Par   map[string]interface{} `json:"par"`   // slice of maps for par
-	Label map[string]string      `json:"label"` // labels to add on pod
+	Subroute string                 `json:"subroute"` // custom data and resource configuration for the request
+	Payload  map[string]interface{} `json:"payload"`  // custom payload for the request
+	Model    string                 // string field for model
+	Token    string                 `json:"token"` // string field for token
+	Env      map[string]string      `json:"env"`   // map of strings for env
+	Par      map[string]interface{} `json:"par"`   // slice of maps for par
+	Label    map[string]string      `json:"label"` // labels to add on pod
 }
 type RequestGroup struct {
 	Requests []Request
@@ -46,26 +49,32 @@ func parseRequest(r *http.Request) Request {
 		log.Printf("Error parsing JSON: %v", err)
 		return Request{}
 	}
+	if req.Payload != nil {
+		log.Printf("Custom payload provided, ignore TGI payload specification variables")
+		req.Model = "custom-" + time.Now().Format("20060102150405")
 
-	// Check if "MODEL_ID" exists in req.Env
-	invalidPattern := regexp.MustCompile(`[^a-z0-9]+`)
-	if MODEL_ID, ok := req.Env["MODEL_ID"]; ok {
-		// Find the index of the last "/"
-		if idx := strings.LastIndex(MODEL_ID, "/"); idx != -1 {
-			req.Model = strings.ToLower(MODEL_ID[idx+1:]) // Extract substring after the last "/"
+	} else {
+
+		// Check if "MODEL_ID" exists in req.Env
+		invalidPattern := regexp.MustCompile(`[^a-z0-9]+`)
+		if MODEL_ID, ok := req.Env["MODEL_ID"]; ok {
+			// Find the index of the last "/"
+			if idx := strings.LastIndex(MODEL_ID, "/"); idx != -1 {
+				req.Model = strings.ToLower(MODEL_ID[idx+1:]) // Extract substring after the last "/"
+			} else {
+				req.Model = strings.ToLower(MODEL_ID) // If no "/" is found, keep the original value
+			}
+			// Remove characters that do not match the regex pattern
+			req.Model = invalidPattern.ReplaceAllString(req.Model, "")
+			if req.Model == "" {
+				log.Printf("Error: No valid model ID after applying regex")
+				return Request{}
+			}
 		} else {
-			req.Model = strings.ToLower(MODEL_ID) // If no "/" is found, keep the original value
-		}
-		// Remove characters that do not match the regex pattern
-		req.Model = invalidPattern.ReplaceAllString(req.Model, "")
-		if req.Model == "" {
-			log.Printf("Error: No valid model ID after applying regex")
+			log.Printf("Error: MODEL_ID not found in request")
+			// Optionally return an empty Request or handle the case as needed
 			return Request{}
 		}
-	} else {
-		log.Printf("Error: MODEL_ID not found in request")
-		// Optionally return an empty Request or handle the case as needed
-		return Request{}
 	}
 
 	log.Printf("Token: %s", req.Token)
@@ -73,8 +82,11 @@ func parseRequest(r *http.Request) Request {
 	log.Printf("Env: %v", req.Env)
 	log.Printf("Par: %v", req.Par)
 	log.Printf("Label: %v", req.Label)
+	log.Printf("Payload: %v", req.Payload)
+	log.Printf("SubRoute: %s", req.Subroute)
 
 	return req
+
 }
 
 // getOrCreateRequestGroup retrieves or creates a new RequestGroup for a given model
