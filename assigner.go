@@ -36,7 +36,7 @@ func (a *Assigner) AssignService(spec ServiceSpec, group RequestGroup) {
 	for _, req := range group.Requests {
 		packedRequest := a.CreatePayload(req)
 		packedRequests = append(packedRequests, packedRequest)
-		log.Printf("Packed request for token: %s", req.Token)
+		log.Printf("Packed new requests for service : %s", spec.Name)
 	}
 
 	// Initialize the Knative serving client
