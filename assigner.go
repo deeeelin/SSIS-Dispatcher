@@ -154,8 +154,9 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 		ObjectMeta: metav1.ObjectMeta{
 			Annotations: map[string]string{
 				servinglib.UserImageAnnotationKey: "",
-				// "autoscaling.knative.dev/class":   "disabled",
-				//	"autoscaling.knative.dev/max-scale": "1", // BUG HERE , not working // default let autoscaler at most scale to one
+				//  "autoscaling.knative.dev/class":   "disabled",
+				"autoscaling.knative.dev/max-scale": "1", // BUG HERE , not working // default let autoscaler at most scale to one
+				"autoscaling.knative.dev/min-scale": "1", // default let autoscaler at least scale to one
 			},
 			Labels: spec.Label,
 		},
