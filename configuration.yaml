@@ -98,38 +98,38 @@ data:
     nvidia.com/gpu-32gb
 
   mps-active-thread-percentage-config: |
-    nvidia.com/gpu-1gb: "3"
-    nvidia.com/gpu-2gb: "6"
-    nvidia.com/gpu-3gb: "9"
-    nvidia.com/gpu-4gb: "12"
-    nvidia.com/gpu-5gb: "15"
-    nvidia.com/gpu-6gb: "18"
-    nvidia.com/gpu-7gb: "21"
-    nvidia.com/gpu-8gb: "25"
-    nvidia.com/gpu-9gb: "28"
-    nvidia.com/gpu-10gb: "31"
-    nvidia.com/gpu-11gb: "34"
-    nvidia.com/gpu-12gb: "37"
-    nvidia.com/gpu-13gb: "40"
-    nvidia.com/gpu-14gb: "43"
-    nvidia.com/gpu-15gb: "46"
-    nvidia.com/gpu-16gb: "50"
-    nvidia.com/gpu-17gb: "53"
-    nvidia.com/gpu-18gb: "56"
-    nvidia.com/gpu-19gb: "59"
-    nvidia.com/gpu-20gb: "62"
-    nvidia.com/gpu-21gb: "65"
-    nvidia.com/gpu-22gb: "68"
-    nvidia.com/gpu-23gb: "71"
-    nvidia.com/gpu-24gb: "75"
-    nvidia.com/gpu-25gb: "78"
-    nvidia.com/gpu-26gb: "81"
-    nvidia.com/gpu-27gb: "84"
-    nvidia.com/gpu-28gb: "87"
-    nvidia.com/gpu-29gb: "90"
-    nvidia.com/gpu-30gb: "93"
-    nvidia.com/gpu-31gb: "96"
-    nvidia.com/gpu-32gb: "100"
+    nvidia.com/gpu-1gb: 3
+    nvidia.com/gpu-2gb: 6
+    nvidia.com/gpu-3gb: 9
+    nvidia.com/gpu-4gb: 12
+    nvidia.com/gpu-5gb: 15
+    nvidia.com/gpu-6gb: 18
+    nvidia.com/gpu-7gb: 21
+    nvidia.com/gpu-8gb: 25
+    nvidia.com/gpu-9gb: 28
+    nvidia.com/gpu-10gb: 31
+    nvidia.com/gpu-11gb: 34
+    nvidia.com/gpu-12gb: 37
+    nvidia.com/gpu-13gb: 40
+    nvidia.com/gpu-14gb: 43
+    nvidia.com/gpu-15gb: 46
+    nvidia.com/gpu-16gb: 50
+    nvidia.com/gpu-17gb: 53
+    nvidia.com/gpu-18gb: 56
+    nvidia.com/gpu-19gb: 59
+    nvidia.com/gpu-20gb: 62
+    nvidia.com/gpu-21gb: 65
+    nvidia.com/gpu-22gb: 68
+    nvidia.com/gpu-23gb: 71
+    nvidia.com/gpu-24gb: 75
+    nvidia.com/gpu-25gb: 78
+    nvidia.com/gpu-26gb: 81
+    nvidia.com/gpu-27gb: 84
+    nvidia.com/gpu-28gb: 87
+    nvidia.com/gpu-29gb: 90
+    nvidia.com/gpu-30gb: 93
+    nvidia.com/gpu-31gb: 96
+    nvidia.com/gpu-32gb: 100
 ---
 
 #---

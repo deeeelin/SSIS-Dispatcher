@@ -16,6 +16,7 @@ func init() {
 
 	ConfigList = make([]string, 0)
 	ConfigMap = make(map[string]int)
+	mpsActiveThreadPercentageMap = make(map[string]string)
 
 	data, err := os.ReadFile("/etc/dispatcher-config/gpu-resource-config")
 	if err != nil {
@@ -39,10 +40,13 @@ func init() {
 	if err != nil {
 		log.Fatalf("Failed to read mps active thread percentage config file: %v", err)
 	}
-
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if line == "" {
+			continue
+		}
+		if !strings.Contains(line, ":") {
+			log.Printf("Skipping invalid mps active thread percentage config line: %q", line)
 			continue
 		}
 		parts := strings.SplitN(line, ":", 2)
