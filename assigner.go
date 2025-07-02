@@ -149,9 +149,13 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 	}
 
 	for gpuType := range spec.GPU_slices {
+		percentage, ok := mpsActiveThreadPercentageMap[gpuType]
+		if !ok {
+			percentage = "100"
+		}
 		envVars = append(envVars, v1.EnvVar{
 			Name:  "CUDA_MPS_ACTIVE_THREAD_PERCENTAGE", // for setting mps compute resource (setting active gpu thread percentage on one gpu)
-			Value: mpsActiveThreadPercentageMap[gpuType],
+			Value: percentage,
 		})
 		break // Assuming we only need to set this for one GPU type
 	}
