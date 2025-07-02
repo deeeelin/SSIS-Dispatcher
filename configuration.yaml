@@ -97,7 +97,7 @@ data:
     nvidia.com/gpu-31gb
     nvidia.com/gpu-32gb
 
-  mps-active-thread-percentage-config: |
+  mps-active-thread-percentage-config: | # for mps mode to set the active thread percentage(compute SM resource)
     nvidia.com/gpu-1gb: 3
     nvidia.com/gpu-2gb: 6
     nvidia.com/gpu-3gb: 9
