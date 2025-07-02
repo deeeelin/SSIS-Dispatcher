@@ -1,8 +1,8 @@
 # Variables
 IMAGE_NAME=ssis-dispatcher
-IMAGE_TAG=main #<PLACEHOLDER: YOUR GITHUB BRANCH NAME>
+IMAGE_TAG=main
 KUBE_CONFIG=configuration.yaml
-GITHUB_USER=deeeelin #<PLACEHOLDER: YOUR GITHUB USERNAME>
+GITHUB_USER=deeeelin
 
 .PHONY: all build push deploy clean
 
