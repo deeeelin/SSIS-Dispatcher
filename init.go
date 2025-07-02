@@ -40,6 +40,9 @@ func init() {
 	if err != nil {
 		log.Fatalf("Failed to read mps active thread percentage config file: %v", err)
 	}
+
+	lines = strings.Split(string(data), "\n")
+
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if line == "" {
