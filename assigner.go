@@ -148,15 +148,22 @@ func (a *Assigner) CreateNewService(spec ServiceSpec, requestPayloads []io.ReadC
 		})
 	}
 
+	for gpuType := range spec.GPU_slices {
+		envVars = append(envVars, v1.EnvVar{
+			Name:  "CUDA_MPS_ACTIVE_THREAD_PERCENTAGE", // for setting mps compute resource (setting active gpu thread percentage on one gpu)
+			Value: mpsActiveThreadPercentageMap[gpuType],
+		})
+		break // Assuming we only need to set this for one GPU type
+	}
+
 	// Add all the resource requirements define to service instance
 
 	svcInstance.Spec.Template = servingv1.RevisionTemplateSpec{
 		ObjectMeta: metav1.ObjectMeta{
 			Annotations: map[string]string{
-				servinglib.UserImageAnnotationKey: "",
-				//  "autoscaling.knative.dev/class":   "disabled",
-				"autoscaling.knative.dev/max-scale": "1", // BUG HERE , not working // default let autoscaler at most scale to one
-				"autoscaling.knative.dev/min-scale": "1", // default let autoscaler at least scale to one
+				servinglib.UserImageAnnotationKey:   "",
+				"autoscaling.knative.dev/max-scale": "1", // disable knative autoscaling
+				"autoscaling.knative.dev/min-scale": "1", // disable knative autoscaling
 			},
 			Labels: spec.Label,
 		},

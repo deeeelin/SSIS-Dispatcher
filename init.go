@@ -10,6 +10,7 @@ var ConfigList []string
 var ConfigMap map[string]int
 var namespace string
 var image string
+var mpsActiveThreadPercentageMap map[string]string
 
 func init() {
 
@@ -33,6 +34,24 @@ func init() {
 	}
 
 	log.Printf("Configured GPU resource config: %v", ConfigList)
+
+	data, err = os.ReadFile("/etc/dispatcher-config/mps-active-thread-percentage-config")
+	if err != nil {
+		log.Fatalf("Failed to read mps active thread percentage config file: %v", err)
+	}
+
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		parts := strings.SplitN(line, ":", 2)
+		key := strings.TrimSpace(parts[0])
+		value := strings.TrimSpace(parts[1])
+		mpsActiveThreadPercentageMap[key] = value
+	}
+
+	log.Printf("Configured mps active thread percentage config: %v", mpsActiveThreadPercentageMap)
 
 	data, err = os.ReadFile("/etc/dispatcher-config/service-namespace")
 	if err != nil {
